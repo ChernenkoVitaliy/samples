@@ -1,0 +1,6 @@
+Using JAXB to Marshall and Unmarshal Java Objects to XML
+Use test classes to see how it works.
+
+
+Where I got it:
+https://springframework.guru/using-jaxb-for-xml-with-java/

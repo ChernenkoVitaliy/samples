@@ -1,0 +1,90 @@
+package com.cv.examples;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
+public class SingleThreadedServer {
+
+    private int serverPort;
+    private ServerSocket serverSocket = null;
+    private boolean isStopped = false;
+    private Thread runningThread = null;
+
+    public SingleThreadedServer(final int port) {
+        this.serverPort = port;
+    }
+
+    public static void main(String[] args) {
+        new SingleThreadedServer(8091).run();
+    }
+
+    public void run() {
+        synchronized (this) {
+            this.runningThread = Thread.currentThread();
+        }
+
+        openServerSocket();
+
+        while (!isStopped()) {
+            Socket clientSocket = null;
+            try {
+                clientSocket = this.serverSocket.accept();
+            }catch (IOException e) {
+                if (isStopped()) {
+                    System.out.println("Server stopped.");
+                    return;
+                }
+                throw new RuntimeException("Error accepting client connection", e);
+            }
+            try {
+                processClientRequest(clientSocket);
+            }catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+        System.out.println("Server stopped.");
+    }
+
+    private void processClientRequest(Socket clientSocket) throws IOException {
+        OutputStream output = clientSocket.getOutputStream();
+        long time = System.currentTimeMillis();
+
+        byte[] responseDocument = ("<html><body>" + "Singlethreaded server: " + time + "</body></html>")
+                .getBytes(StandardCharsets.UTF_8);
+
+        byte[] responseHeader = ("HTTP/1.1 200 OK\r\n" +
+                                "Content-type: text/html; charset=UTF-8\r\n" +
+                                "Content-length: " + responseDocument.length +
+                                "\r\n\r\n").getBytes(StandardCharsets.UTF_8);
+
+        output.write(responseHeader);
+        output.write(responseDocument);
+        output.close();
+        System.out.println("Request processed: " + time);
+    }
+
+
+    private synchronized boolean isStopped() {
+        return this.isStopped;
+    }
+
+    public synchronized void stop() {
+        this.isStopped = true;
+        try {
+            this.serverSocket.close();
+        }catch (IOException e) {
+            throw new RuntimeException("Error closing server", e);
+        }
+    }
+
+    private void openServerSocket() {
+        try {
+            this.serverSocket = new ServerSocket(this.serverPort);
+        }catch (IOException e) {
+            throw new RuntimeException("Cannot open port 8080", e);
+        }
+    }
+}

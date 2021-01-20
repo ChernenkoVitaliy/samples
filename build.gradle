@@ -1,19 +1,68 @@
 plugins {
     id 'java'
+    id 'war'
 }
 
 group 'com.company'
 version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
+
+configure(subprojects) { project ->
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+//    apply plugin: "net.saliman.properties"
+//    apply plugin: 'nebula.optional-base'
+//    apply plugin: 'io.spring.dependency-management'
+//    apply plugin: 'org.springframework.boot'
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    }
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+project(':servlets') {
+    apply plugin: 'war'
+    war {
+        archiveFileName = 'servlets-test.war'
+    }
+
+    dependencies {
+        providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+        compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+        providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.3'
+    }
 }
 
-test {
-    useJUnitPlatform()
+project(':xml') {
+    dependencies {
+        compile('javax.xml.bind:jaxb-api:2.3.0')
+        compile('javax.activation:activation:1.1')
+        compile('org.glassfish.jaxb:jaxb-runtime:2.3.0')
+    }
+}
+
+project(':spring-mvc-noboot') {
+    apply plugin: 'war'
+    war {
+        archiveFileName = 'spring-mvc-noboot.war'
+    }
+    dependencies {
+        compile group: 'org.springframework', name: 'spring-webmvc', version: '5.3.3'
+        compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+        compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+        compile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.3'
+    }
 }

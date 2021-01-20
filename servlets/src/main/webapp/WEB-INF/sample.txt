@@ -1,0 +1,2 @@
+sample .txt file for example how use servlets for download
+Class DownloadServlet.java

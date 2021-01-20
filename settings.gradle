@@ -1,1 +1,8 @@
 rootProject.name = 'samples'
+include 'properties'
+include 'http'
+include 'servlets'
+include 'xml'
+include 'optional'
+include 'spring-mvc-noboot'
+
