@@ -1,4 +1,4 @@
-package com.company.reqmapping;
+package com.company.controllers.reqmapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package com.company.reqmapping;
+package com.company.controllers.reqmapping;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
