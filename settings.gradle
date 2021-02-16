@@ -7,4 +7,5 @@ include 'optional'
 include 'spring-mvc-noboot'
 include 'file'
 include 'byte-streams'
+include 'multithreading'
 
